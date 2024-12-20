@@ -966,56 +966,6 @@
       "timeShift": null,
       "title": "Tests",
       "type": "table"
-    },
-    {
-      "panels": [
-        {
-          "title": "Latency",
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "fields_latency"
-            }
-          ]
-        },
-        {
-          "title": "Jitter",
-          "targets": [
-            {
-              "refId": "B",
-              "expr": "fields_jitter"
-            }
-          ]
-        },
-        {
-          "title": "Temps Mitjà",
-          "targets": [
-            {
-              "refId": "C",
-              "expr": "temps_mitja"
-            }
-          ]
-        },
-        {
-          "title": "Paquets Enviats",
-          "targets": [
-            {
-              "refId": "D",
-              "expr": "paquets_enviats"
-            }
-          ]
-        },
-        {
-          "title": "Paquets Perduts",
-          "targets": [
-            {
-              "refId": "E",
-              "expr": "paquets_perduts"
-            }
-          ]
-        }
-      ],
-      "title": "Ping"
     }
   ],
   "refresh": "10s",
