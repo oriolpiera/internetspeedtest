@@ -4,6 +4,8 @@ import time
 import json
 import paho.mqtt.client as mqtt
 import re
+import csv
+from datetime import datetime
 
 
 class speedtest():
@@ -63,12 +65,38 @@ class speedtest():
 
         return paquets_enviats, paquets_perduts, temps_mitja
 
+    def save_results_to_csv(self, file_path, download, upload, ping, paquets_enviats, paquets_perduts, temps_mitja):
+        file_exists = False
+        try:
+            with open(file_path, 'x') as f:
+                file_exists = True
+        except FileExistsError:
+            pass
+
+        with open(file_path, 'a', newline='') as csvfile:
+            fieldnames = ['timestamp', 'download_speed_mbps', 'upload_speed_mbps', 'ping_ms', 'paquets_enviats', 'paquets_perduts', 'temps_mitja']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            if not file_exists:
+                writer.writeheader()
+
+            writer.writerow({
+                'timestamp': datetime.now().isoformat(),
+                'download_speed_mbps': download,
+                'upload_speed_mbps': upload,
+                'ping_ms': ping,
+                'paquets_enviats': paquets_enviats,
+                'paquets_perduts': paquets_perduts,
+                'temps_mitja': temps_mitja,
+            })
+
 
 speedtest = speedtest()
 frequency = os.environ.get('FREQUENCY') or 3600
 broker_address = os.environ.get('MQTT_BROKER') or "localhost"
 
 client = mqtt.Client("1")
+file_path = "/data/internet_speed_results.csv"
 
 while True:
     client.connect(broker_address)
@@ -84,10 +112,7 @@ while True:
                 "latency": float(result['ping']['latency']),
                 "jitter": float(result['ping']['jitter']),
                 "interface": str(result['interface']['name']),
-                "server": str(result['server']['host']),
-                "paquets_enviats": str(paquets_enviats),
-                "paquets_perduts": str(paquets_perduts),
-                "temps_mitja": str(temps_mitja)
+                "server": str(result['server']['host'])
             }
         }
     ]
@@ -96,6 +121,14 @@ while True:
     msg_info = client.publish("sensors",json.dumps(json_body))
     if msg_info.is_published() == False:
             msg_info.wait_for_publish()
+
+    speedtest.save_results_to_csv(
+        file_path,
+        int(str(result['download']['bandwidth'])),
+        int(result['upload']['bandwidth']),
+        float(result['ping']['latency']),
+        paquets_enviats, paquets_perduts, temps_mitja)
+
     client.disconnect()
     #time.sleep(int(frequency))
 
