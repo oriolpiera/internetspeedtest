@@ -66,10 +66,10 @@ class speedtest():
         return paquets_enviats, paquets_perduts, temps_mitja
 
     def save_results_to_csv(self, file_path, download, upload, ping, paquets_enviats, paquets_perduts, temps_mitja):
-        file_exists = False
+        file_exists = True
         try:
             with open(file_path, 'x') as f:
-                file_exists = True
+                file_exists = False
         except FileExistsError:
             pass
 
