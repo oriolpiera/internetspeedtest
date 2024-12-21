@@ -3,6 +3,7 @@ volumes:
     speedtest-data:
     settings:
     dashboard-data:
+    checkconnection-data:
 services:
   speedtest:
     build: ./speedtest
@@ -44,3 +45,11 @@ services:
     ports:
       - "1883:1883"
     restart: always
+  checkconnection:
+    restart: always
+    build: ./checkconnection
+    volumes:
+      - 'checkconnection-data:/data'
+    network_mode: host
+    labels:
+      io.balena.features.supervisor-api: 1

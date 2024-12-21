@@ -19,13 +19,17 @@ class speedtest():
         p = subprocess.Popen(args , shell=False, stdout=subprocess.PIPE)
         response = p.communicate()
         result = json.loads(response[0])
-        print ("Timestamp = " + str(result['timestamp']))
-        print ("Down = " + str(result['download']['bandwidth']))
-        print ("Up = " + str(result['upload']['bandwidth']))
-        print ("Latency = " + str(result['ping']['latency']))
-        print ("Jitter = " + str(result['ping']['jitter']))
-        print ("Interface = " + str(result['interface']))
-        print ("Server = " + str(result['server']))
+        try:
+            print ("Timestamp = " + str(result['timestamp']))
+            print ("Down = " + str(result['download']['bandwidth']))
+            print ("Up = " + str(result['upload']['bandwidth']))
+            print ("Latency = " + str(result['ping']['latency']))
+            print ("Jitter = " + str(result['ping']['jitter']))
+            print ("Interface = " + str(result['interface']))
+            print ("Server = " + str(result['server']))
+        except Exception as e:
+            print(result)
+            print(e)
         return result
 
     def ping_adreca(self, adreca, duracio_segons):
