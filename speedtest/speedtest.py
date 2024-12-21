@@ -101,7 +101,6 @@ file_path = "/data/internet_speed_results.csv"
 while True:
     client.connect(broker_address)
     result = speedtest.test()
-    paquets_enviats, paquets_perduts, temps_mitja = speedtest.ping_adreca('www.google.com', int(frequency))
     json_body = [
         {
             "measurement": "download",
@@ -113,6 +112,26 @@ while True:
                 "jitter": float(result['ping']['jitter']),
                 "interface": str(result['interface']['name']),
                 "server": str(result['server']['host'])
+            }
+        }
+    ]
+
+    print("JSON body = " + str(json_body))
+    msg_info = client.publish("sensors",json.dumps(json_body))
+    if msg_info.is_published() == False:
+            msg_info.wait_for_publish()
+
+
+
+    paquets_enviats, paquets_perduts, temps_mitja = speedtest.ping_adreca('www.google.com', int(frequency))
+    json_body = [
+        {
+            "measurement": "ping",
+            "time": str(result['timestamp']),
+            "fields": {
+                'paquets_enviats': int(paquets_enviats),
+                'paquets_perduts': int(paquets_perduts),
+                'temps_mitja': float(temps_mitja)
             }
         }
     ]
